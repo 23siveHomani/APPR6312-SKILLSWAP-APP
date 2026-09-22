@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">SkillSwap</string>
+    <string name="tagline">Shintshanisa amakhono, hhayi imali.</string>
+
+    <string name="email_hint">I-imeyili</string>
+    <string name="password_hint">Iphasiwedi</string>
+    <string name="confirm_password_hint">Qinisekisa iphasiwedi</string>
+    <string name="name_hint">Igama eliphelele</string>
+
+    <string name="login_button">Ngena</string>
+    <string name="register_button">Dala i-akhawunti</string>
+    <string name="go_to_register">Awunayo i-akhawunti? Bhalisa</string>
+    <string name="create_account">Dala i-akhawunti yakho</string>
+
+    <string name="browse_skills">Bheka Amakhono</string>
+    <string name="offline_banner">Ubuka imiphumela egciniwe — kubonakala ungaxhunyiwe</string>
+    <string name="no_listings">Awekho amakhono abhalisiwe okwamanje</string>
+
+    <string name="settings">Izilungiselelo</string>
+    <string name="logout">Phuma</string>
+    <string name="language">Ulimi lohlelo</string>
+    <string name="language_english">IsiNgisi</string>
+    <string name="language_zulu">IsiZulu</string>
+    <string name="language_afrikaans">IsiBhunu</string>
+    <string name="enable_notifications">Vumela izaziso</string>
+    <string name="sync_wifi_only">Vumelanisa nge-Wi-Fi kuphela</string>
+</resources>

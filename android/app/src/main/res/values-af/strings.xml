@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">SkillSwap</string>
+    <string name="tagline">Ruil vaardighede, nie kontant nie.</string>
+
+    <string name="email_hint">E-pos</string>
+    <string name="password_hint">Wagwoord</string>
+    <string name="confirm_password_hint">Bevestig wagwoord</string>
+    <string name="name_hint">Volle naam</string>
+
+    <string name="login_button">Meld aan</string>
+    <string name="register_button">Skep rekening</string>
+    <string name="go_to_register">Het jy nie \'n rekening nie? Registreer</string>
+    <string name="create_account">Skep jou rekening</string>
+
+    <string name="browse_skills">Blaai deur vaardighede</string>
+    <string name="offline_banner">Jy kyk na gekaste resultate — dit lyk of jy vanlyn is</string>
+    <string name="no_listings">Nog geen vaardigheidslysings nie</string>
+
+    <string name="settings">Instellings</string>
+    <string name="logout">Meld af</string>
+    <string name="language">Apptaal</string>
+    <string name="language_english">Engels</string>
+    <string name="language_zulu">isiZulu</string>
+    <string name="language_afrikaans">Afrikaans</string>
+    <string name="enable_notifications">Aktiveer kennisgewings</string>
+    <string name="sync_wifi_only">Sinkroniseer slegs op Wi-Fi</string>
+</resources>

@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">SkillSwap</string>
+    <string name="tagline">Trade skills, not cash.</string>
+
+    <string name="email_hint">Email</string>
+    <string name="password_hint">Password</string>
+    <string name="confirm_password_hint">Confirm password</string>
+    <string name="name_hint">Full name</string>
+
+    <string name="login_button">Log in</string>
+    <string name="register_button">Create account</string>
+    <string name="go_to_register">Don\'t have an account? Sign up</string>
+    <string name="create_account">Create your account</string>
+
+    <string name="browse_skills">Browse Skills</string>
+    <string name="offline_banner">You\'re viewing cached results — you appear to be offline</string>
+    <string name="no_listings">No skill listings yet</string>
+
+    <string name="settings">Settings</string>
+    <string name="logout">Log out</string>
+    <string name="language">App language</string>
+    <string name="language_english">English</string>
+    <string name="language_zulu">isiZulu</string>
+    <string name="language_afrikaans">Afrikaans</string>
+    <string name="enable_notifications">Enable notifications</string>
+    <string name="sync_wifi_only">Sync on Wi-Fi only</string>
+</resources>
