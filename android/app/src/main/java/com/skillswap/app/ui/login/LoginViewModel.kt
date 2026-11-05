@@ -37,10 +37,10 @@ class LoginViewModel(private val authRepository: AuthRepository) : ViewModel() {
         }
     }
 
-    fun loginWithGoogle(idToken: String) {
+    fun loginWithGoogle(idToken: String, email: String? = null, name: String? = null) {
         _uiState.value = LoginUiState.Loading
         viewModelScope.launch {
-            when (val result = authRepository.loginWithGoogle(idToken)) {
+            when (val result = authRepository.loginWithGoogle(idToken, email, name)) {
                 is ApiResult.Success -> _uiState.value = LoginUiState.Success(result.data)
                 is ApiResult.Failure -> _uiState.value = LoginUiState.Error(result.message)
             }

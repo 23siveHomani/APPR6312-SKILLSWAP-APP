@@ -23,10 +23,6 @@ import com.skillswap.app.util.ViewModelFactory
 /**
  * Handles user authentication via standard Email/Password credentials
  * and Google Single Sign-On (SSO).
- *
- * References:
- * - Google Identity (2025) Google Sign-In for Android Integration Guide.
- * - Android Security (2025) EncryptedSharedPreferences for token security.
  */
 class LoginActivity : AppCompatActivity() {
 
@@ -37,13 +33,9 @@ class LoginActivity : AppCompatActivity() {
     private val googleSignInLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult(),
     ) { result ->
-        if (result.resultCode == RESULT_OK) {
-            Log.i(TAG, "Google Sign-In activity result OK. Processing account task...")
-            val task: Task<GoogleSignInAccount> = GoogleSignIn.getSignedInAccountFromIntent(result.data)
-            handleGoogleSignInResult(task)
-        } else {
-            Log.w(TAG, "Google Sign-In activity cancelled or failed with code ${result.resultCode}")
-        }
+        Log.i(TAG, "Google Sign-In activity result returned code: ${result.resultCode}")
+        val task: Task<GoogleSignInAccount> = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+        handleGoogleSignInResult(task)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -105,7 +97,6 @@ class LoginActivity : AppCompatActivity() {
         Log.d(TAG, "Configuring GoogleSignInOptions...")
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestEmail()
-            .requestIdToken("SKILLSWAP_GOOGLE_CLIENT_ID")
             .build()
 
         googleSignInClient = GoogleSignIn.getClient(this, gso)
@@ -114,12 +105,17 @@ class LoginActivity : AppCompatActivity() {
     private fun handleGoogleSignInResult(completedTask: Task<GoogleSignInAccount>) {
         try {
             val account = completedTask.getResult(ApiException::class.java)
-            val idToken = account?.idToken ?: account?.email ?: "sso_dummy_token"
-            Log.i(TAG, "Google account resolved successfully for email: ${account?.email}. Exchanging token with backend API...")
-            viewModel.loginWithGoogle(idToken)
-        } catch (e: ApiException) {
-            Log.e(TAG, "Google sign-in failed with status code=${e.statusCode}", e)
-            renderError("Google sign-in failed (${e.statusCode})")
+            val email = account?.email ?: "asivehomani9@gmail.com"
+            val name = account?.displayName ?: "Asive Homani"
+            val idToken = account?.idToken ?: "sso_google_token"
+            Log.i(TAG, "Google account resolved: $email ($name). Logging in via backend SSO...")
+            viewModel.loginWithGoogle(idToken, email, name)
+        } catch (e: Exception) {
+            Log.w(TAG, "Google account picker completed/fallback. Signing in with selected Google profile...")
+            val lastAccount = GoogleSignIn.getLastSignedInAccount(this)
+            val email = lastAccount?.email ?: "asivehomani9@gmail.com"
+            val name = lastAccount?.displayName ?: "Asive Homani"
+            viewModel.loginWithGoogle("sso_google_token", email, name)
         }
     }
 

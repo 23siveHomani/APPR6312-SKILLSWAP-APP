@@ -27,7 +27,9 @@ data class LoginRequest(
 )
 
 data class GoogleAuthRequest(
-    val idToken: String
+    val idToken: String,
+    val email: String? = null,
+    val name: String? = null
 )
 
 data class SettingsUpdateRequest(

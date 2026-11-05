@@ -49,9 +49,9 @@ class AuthRepository(
         }
     }
 
-    suspend fun loginWithGoogle(idToken: String): ApiResult<User> {
+    suspend fun loginWithGoogle(idToken: String, email: String? = null, name: String? = null): ApiResult<User> {
         return try {
-            val response = api.loginWithGoogle(GoogleAuthRequest(idToken))
+            val response = api.loginWithGoogle(GoogleAuthRequest(idToken = idToken, email = email, name = name))
             if (response.isSuccessful && response.body() != null) {
                 val body = response.body()!!
                 sessionManager.saveToken(body.token)
