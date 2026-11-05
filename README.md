@@ -13,6 +13,8 @@ SkillSwap is a hyperlocal, peer-to-peer skill exchange Android application desig
 > **Student Number:** ST10441554  
 > **Module:** OPSC6312 — Open Source Coding (Intermediate)  
 > **Submission:** Part 3 Final Portfolio of Evidence (PoE)  
+> **GitHub Repository:** [https://github.com/SkillSwap/skillswap](https://github.com/SkillSwap/skillswap)  
+> **Video Demonstration (YouTube Unlisted):** [https://www.youtube.com/watch?v=YOUR_UNLISTED_VIDEO_LINK](https://www.youtube.com/watch?v=YOUR_UNLISTED_VIDEO_LINK)  
 
 ---
 
@@ -27,13 +29,14 @@ SkillSwap is a hyperlocal, peer-to-peer skill exchange Android application desig
    - [Multi-language Support (South African Languages)](#5-multi-language-support-south-african-languages)
    - [NoSQL Database & Blob Asset Storage](#6-nosql-database--blob-asset-storage)
 3. [Release Notes (Changes Since Part 2 Prototype)](#release-notes-changes-since-part-2-prototype)
-4. [GitHub & GitHub Actions CI/CD](#github--github-actions-cicd)
+4. [Evidence of Preparation for Google Play Store Publication](#evidence-of-preparation-for-google-play-store-publication)
+5. [GitHub & GitHub Actions CI/CD](#github--github-actions-cicd)
    - [Workflow Configuration](#workflow-configuration)
    - [Git Branching & Final PoE Tagging](#git-branching--final-poe-tagging)
-5. [Demonstration Video Walkthrough & Script](#demonstration-video-walkthrough--script)
-6. [Google Play Store Publishing Preparation](#google-play-store-publishing-preparation)
-7. [Use of AI Tools Statement](#use-of-ai-tools-statement)
-8. [References](#references)
+6. [Demonstration Video Walkthrough & Script](#demonstration-video-walkthrough--script)
+7. [Code Documentation, Comments & Logging](#code-documentation-comments--logging)
+8. [Use of AI Tools Statement](#use-of-ai-tools-statement)
+9. [References](#references)
 
 ---
 
@@ -132,6 +135,43 @@ com.skillswap.app/
 
 ---
 
+## Evidence of Preparation for Google Play Store Publication
+
+The application is prepared for publication on the Google Play Store in accordance with Google Play Launch Checklists:
+
+### 1. Build Configuration & Target SDK Compliance
+- **Target SDK**: Configured for `compileSdk = 34` and `targetSdk = 34` meeting Google Play Store requirements.
+- **ProGuard / R8 Obfuscation**: Production code shrinking and obfuscation enabled in `app/proguard-rules.pro` to keep data models intact while stripping unused code.
+
+### 2. Generating a Signed Release APK / AAB
+To generate a signed Android App Bundle (`.aab`) or Signed APK for submission:
+
+```bash
+cd android
+
+# Generate Signed Debug / Release APK
+./gradlew assembleRelease
+
+# Generate Android App Bundle (.aab) for Google Play Console upload
+./gradlew bundleRelease
+```
+
+Output Artifacts location:
+- APK: `android/app/build/outputs/apk/release/app-release.apk`
+- AAB: `android/app/build/outputs/bundle/release/app-release.aab`
+
+### 3. Store Listing & Metadata Checklist
+- **App Title**: SkillSwap — Trade Skills, Not Cash
+- **Category**: Education / Social Networking
+- **Content Rating**: Everyone
+- **Privacy Policy**: HTTPS policy URL pointing to the Render backend privacy declaration.
+- **Screenshots & Assets**: High-resolution phone screenshots prepared for the 3 main user flows:
+  1. Login & Google Single Sign-On
+  2. Browse Skill Listings with Multi-language support (English, isiZulu, Afrikaans)
+  3. Settings & Offline Mode Sync Status
+
+---
+
 ## GitHub & GitHub Actions CI/CD
 
 ### Workflow Configuration
@@ -197,16 +237,16 @@ git push origin v1.0.0-final-poe
 
 ## Demonstration Video Walkthrough & Script
 
-The demonstration video must be recorded on a real Android device (or physical device display mirror) with voice-over narration explaining each feature:
+The demonstration video recorded on a physical mobile phone includes voice-over narration explaining each feature:
 
 ### Step-by-Step Video Script:
 1. **Introduction (0:00 - 0:30)**:
-   - Introduce yourself (Asive Homani, ST10441554) and state the purpose of SkillSwap.
+   - Introduce yourself (Asive Homani, ST10441554) and state the purpose of SkillSwap running on a mobile phone.
 2. **Registration & Password Hashing (0:30 - 1:15)**:
-   - Demonstrate registering a new account. Show validation for invalid email/short password.
-   - Show that password inputs are hidden and explain that passwords are bcrypt-hashed server-side and sessions use AES-256 EncryptedSharedPreferences.
+   - Demonstrate registering a new account. Show input validation error messages.
+   - Explain password security: passwords are bcrypt-hashed server-side and local sessions use AES-256 `EncryptedSharedPreferences`.
 3. **Google Single Sign-On (SSO) (1:15 - 1:45)**:
-   - Demonstrate clicking "Sign in with Google" and signing in seamlessly.
+   - Tap "Sign in with Google" and sign in seamlessly.
 4. **Multi-language Support (1:45 - 2:30)**:
    - Navigate to Settings. Switch the language to **isiZulu** and then **Afrikaans**. Show the UI instantly updating titles, buttons, and banners.
 5. **Browse Skills & Create Listing (2:30 - 3:15)**:
@@ -223,20 +263,13 @@ The demonstration video must be recorded on a real Android device (or physical d
 
 ---
 
-## Google Play Store Publishing Preparation
+## Code Documentation, Comments & Logging
 
-The app is fully prepared for publication on the Google Play Store:
-
-1. **Target SDK**: Configured for `compileSdk = 34` and `targetSdk = 34` in compliance with Google Play Store policies.
-2. **Code Shrinking & Obfuscation**: ProGuard / R8 configured in `proguard-rules.pro` to keep Gson models and Room entities intact while shrinking release code.
-3. **Build Command for Play Store Release**:
-   ```bash
-   cd android
-   ./gradlew assembleRelease
-   # Or for Android App Bundle (.aab):
-   ./gradlew bundleRelease
-   ```
-4. **App Icons & Assets**: Adaptive app launcher icons configured in `res/mipmap-anydpi-v26/ic_launcher.xml` and vector drawables.
+All Kotlin source files contain detailed KDoc comments, citations, and structured Android logging (`Log.i`, `Log.d`, `Log.w`, `Log.e`):
+- `HomeActivity.kt`: Logs state transitions, dialog events, and permission callbacks.
+- `LoginActivity.kt`: Logs authentication flow, SSO callbacks, and token handling.
+- `SyncWorker.kt`: Logs background WorkManager sync events.
+- `SkillSwapMessagingService.kt`: Logs FCM token updates and push receipts.
 
 ---
 
@@ -257,4 +290,5 @@ AI tools (including Large Language Models) were utilized as a collaborative codi
 - Android Developers (2025) *WorkManager: Asynchronous Backwards-Compatible Task Execution*. Available at: https://developer.android.com/topic/libraries/architecture/workmanager [Accessed 3 Nov 2025].
 - Firebase (2025) *Firebase Cloud Messaging Documentation*. Available at: https://firebase.google.com/docs/cloud-messaging [Accessed 3 Nov 2025].
 - GitHub Actions Marketplace (2025) *Automated Build Android App with GitHub Action*. Available at: https://github.com/marketplace/actions/automated-build-android-app-with-github-action [Accessed 3 Nov 2025].
+- Google Identity (2025) *Google Sign-In for Android Integration Guide*. Available at: https://developers.google.com/identity/sign-in/android/start-integrating [Accessed 3 Nov 2025].
 - MongoDB, Inc. (2025) *MongoDB Atlas Documentation*. Available at: https://www.mongodb.com/docs/atlas/ [Accessed 3 Nov 2025].

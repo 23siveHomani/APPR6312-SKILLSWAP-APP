@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -24,6 +25,14 @@ import com.skillswap.app.util.LocaleHelper
 import com.skillswap.app.util.ServiceLocator
 import com.skillswap.app.util.ViewModelFactory
 
+/**
+ * Main dashboard screen where users browse available skill listings,
+ * create new skill listings, view offline indicators, and manage app options.
+ *
+ * References:
+ * - Android Developers (2025) Recyclerview and Adapter pattern.
+ * - Android Developers (2025) Runtime permissions guide (Tiramisu POST_NOTIFICATIONS).
+ */
 class HomeActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityHomeBinding
@@ -32,8 +41,8 @@ class HomeActivity : AppCompatActivity() {
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
-    ) { _ ->
-        // Notification permission callback
+    ) { isGranted: Boolean ->
+        Log.i(TAG, "Notification permission result: isGranted = $isGranted")
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,6 +53,7 @@ class HomeActivity : AppCompatActivity() {
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
 
+        Log.i(TAG, "HomeActivity created. Initializing UI components...")
         checkNotificationPermission()
 
         binding.toolbar.setOnMenuItemClickListener { handleMenuClick(it) }
@@ -56,11 +66,18 @@ class HomeActivity : AppCompatActivity() {
             ViewModelFactory { HomeViewModel(ServiceLocator.listingRepository(this)) }
         )[HomeViewModel::class.java]
 
-        binding.swipeRefresh.setOnRefreshListener { viewModel.loadListings() }
+        binding.swipeRefresh.setOnRefreshListener {
+            Log.d(TAG, "Swipe to refresh triggered by user.")
+            viewModel.loadListings()
+        }
 
-        binding.fabAddListing.setOnClickListener { showAddListingDialog() }
+        binding.fabAddListing.setOnClickListener {
+            Log.d(TAG, "Add Listing FAB clicked. Showing creation dialog...")
+            showAddListingDialog()
+        }
 
         viewModel.uiState.observe(this) { state ->
+            Log.d(TAG, "Observed UI State update: listingsCount=${state.listings.size}, isFromCache=${state.isFromCache}, pendingCount=${state.pendingSyncCount}")
             binding.swipeRefresh.isRefreshing = state.isLoading
             binding.tvOfflineBanner.visibility = if (state.isFromCache) View.VISIBLE else View.GONE
             binding.tvPendingSyncBanner.visibility = if (state.pendingSyncCount > 0) View.VISIBLE else View.GONE
@@ -77,6 +94,7 @@ class HomeActivity : AppCompatActivity() {
             }
 
             state.error?.let {
+                Log.w(TAG, "Displaying error snackbar: $it")
                 Snackbar.make(binding.root, it, Snackbar.LENGTH_SHORT).show()
             }
         }
@@ -88,7 +106,10 @@ class HomeActivity : AppCompatActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) !=
                 PackageManager.PERMISSION_GRANTED) {
+                Log.i(TAG, "Requesting POST_NOTIFICATIONS runtime permission...")
                 requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            } else {
+                Log.d(TAG, "POST_NOTIFICATIONS permission already granted.")
             }
         }
     }
@@ -102,19 +123,24 @@ class HomeActivity : AppCompatActivity() {
                 val category = dialogBinding.etCategory.text.toString()
                 val description = dialogBinding.etDescription.text.toString()
                 val imageUrl = dialogBinding.etImageUrl.text.toString()
+                Log.i(TAG, "Submitting new skill listing: title='$title', category='$category'")
                 viewModel.createListing(title, category, description, imageUrl)
             }
-            .setNegativeButton(R.string.cancel, null)
+            .setNegativeButton(R.string.cancel) { _, _ ->
+                Log.d(TAG, "Add listing dialog cancelled.")
+            }
             .show()
     }
 
     private fun handleMenuClick(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_settings -> {
+                Log.i(TAG, "Navigating to SettingsActivity.")
                 startActivity(Intent(this, SettingsActivity::class.java))
                 true
             }
             R.id.action_logout -> {
+                Log.i(TAG, "Logging out user and clearing secure session...")
                 ServiceLocator.authRepository(this).logout()
                 val intent = Intent(this, LoginActivity::class.java).apply {
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -125,5 +151,9 @@ class HomeActivity : AppCompatActivity() {
             }
             else -> false
         }
+    }
+
+    companion object {
+        private const val TAG = "HomeActivity"
     }
 }
