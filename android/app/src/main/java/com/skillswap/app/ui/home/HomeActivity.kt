@@ -7,6 +7,7 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
@@ -27,11 +28,7 @@ import com.skillswap.app.util.ViewModelFactory
 
 /**
  * Main dashboard screen where users browse available skill listings,
- * create new skill listings, view offline indicators, and manage app options.
- *
- * References:
- * - Android Developers (2025) Recyclerview and Adapter pattern.
- * - Android Developers (2025) Runtime permissions guide (Tiramisu POST_NOTIFICATIONS).
+ * create new skill listings, view offline indicators, and access Settings & Logout.
  */
 class HomeActivity : AppCompatActivity() {
 
@@ -55,8 +52,6 @@ class HomeActivity : AppCompatActivity() {
 
         Log.i(TAG, "HomeActivity created. Initializing UI components...")
         checkNotificationPermission()
-
-        binding.toolbar.setOnMenuItemClickListener { handleMenuClick(it) }
 
         binding.rvListings.layoutManager = LinearLayoutManager(this)
         binding.rvListings.adapter = adapter
@@ -100,6 +95,15 @@ class HomeActivity : AppCompatActivity() {
         }
 
         viewModel.loadListings()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_home, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return handleMenuClick(item) || super.onOptionsItemSelected(item)
     }
 
     private fun checkNotificationPermission() {
