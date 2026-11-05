@@ -158,8 +158,39 @@ Both give a green ✅ / red ❌ check on commits and PRs, satisfying the brief's
 
 ****LATER.
 
+
 ## Use of AI tools
-****LATER 
+
+For Part 3 of my SkillSwap Android app, I used AI tools as a support aid, not as a replacement for my own work. I designed the app, built the features and made the final decisions myself. AI helped me understand requirements, set up automation and solve problems faster.
+
+### Tools used
+
+- **Gemini in Android Studio (agent mode):** used inside my project to read files and suggest changes.
+- **Claude (Anthropic):** used in chat to extract text and to help me troubleshoot.
+- **Google AI Studio:** used to create an API key after I reached the hourly limit.
+
+### Where and how I used AI
+
+- **Understanding the brief.** I gave Claude screenshots of the Part 3 brief and asked it to extract the text page by page. I used this to build a checklist of requirements: register and log in, single sign-on, settings, REST API, offline sync, push notifications, multi-language support, README, GitHub Actions and publishing evidence.
+- **GitHub Actions and automated builds.** I used the Gemini agent to read my project, including the .github folder and my android-ci.yml file, and to help check the workflow that builds the app and runs tests. I compared it with the build.yml example provided in the brief.
+- **README and documentation.** Gemini helped me look through my README and think about its structure: the purpose of the app, design considerations, use of GitHub and GitHub Actions, and release notes.
+- **Troubleshooting tools.** When Android Studio showed that I had exceeded the prompt request limit, I used Claude to understand the message, find the Model Providers settings and set up my own API key from Google AI Studio so I could continue working.
+
+### How it helped me
+
+AI saved me time on repetitive and unfamiliar tasks, especially continuous integration, which I had not used before. It explained errors in plain language, which helped me learn instead of just copying fixes. Extracting the brief into a clear checklist also made sure I did not miss any requirement, such as the PoE-only features.
+
+### Checking and taking responsibility
+
+I did not accept AI output blindly. In Android Studio I reviewed the suggested edits and used Keep All or Revert All to decide what stayed in my project. I built and ran the app on a physical phone, checked that the GitHub Actions build worked, and added my own comments and logging so that I understand my code. I kept my API key private and did not place it in my source code or on GitHub.
+
+### Limitations
+
+The free tier of Gemini has strict hourly limits, so I had to break my requests into smaller prompts. AI suggestions also needed testing and sometimes correction, so I treated them as a starting point only.
+
+### Conclusion
+
+AI tools helped me work more efficiently and understand new concepts, but all features, testing and final decisions in SkillSwap are my own work.
 ## References
 
 - Firebase (2026) *Firebase Cloud Messaging Documentation*. https://firebase.google.com/docs/cloud-messaging
