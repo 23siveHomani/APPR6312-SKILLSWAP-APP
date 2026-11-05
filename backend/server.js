@@ -13,8 +13,9 @@ async function start() {
   await connectDB(process.env.MONGO_URI);
 
   const app = createApp();
-  app.listen(PORT, () => {
-    console.log(`[server] SkillSwap API listening on port ${PORT}`);
+  const HOST = process.env.HOST || '0.0.0.0';
+  app.listen(PORT, HOST, () => {
+    console.log(`[server] SkillSwap API listening on http://${HOST}:${PORT}`);
   });
 }
 
