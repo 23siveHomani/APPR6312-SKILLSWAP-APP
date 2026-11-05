@@ -13,7 +13,7 @@ SkillSwap is a hyperlocal, peer-to-peer skill exchange Android application desig
 > **Student Number:** ST10441554  
 > **Module:** OPSC6312 — Open Source Coding (Intermediate)  
 > **Submission:** Part 3 Final Portfolio of Evidence (PoE)  
-> **GitHub Repository:** [https://github.com/SkillSwap/skillswap](https://github.com/SkillSwap/skillswap)  
+> **GitHub Repository:** [https://github.com/23siveHomani/OPSC6312-SKILLSWAP-APP](https://github.com/23siveHomani/OPSC6312-SKILLSWAP-APP)
 > **Video Demonstration (YouTube Unlisted):** [https://www.youtube.com/watch?v=YOUR_UNLISTED_VIDEO_LINK](https://www.youtube.com/watch?v=YOUR_UNLISTED_VIDEO_LINK)  
 
 ---
