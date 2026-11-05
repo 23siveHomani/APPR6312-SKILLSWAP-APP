@@ -26,6 +26,9 @@ interface ApiService {
     @PATCH("users/me")
     suspend fun updateSettings(@Body body: SettingsUpdateRequest): Response<UserResponse>
 
+    @POST("users/test-notification")
+    suspend fun sendTestNotification(@Body body: Map<String, String>): Response<Unit>
+
     @GET("listings")
     suspend fun getListings(@Query("category") category: String? = null): Response<ListingsResponse>
 

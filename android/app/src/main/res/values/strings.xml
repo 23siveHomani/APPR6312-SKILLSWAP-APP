@@ -24,6 +24,7 @@
     <string name="language_zulu">isiZulu</string>
     <string name="language_afrikaans">Afrikaans</string>
     <string name="enable_notifications">Enable notifications</string>
+    <string name="test_push_notification">Test Push Notification</string>
     <string name="sync_wifi_only">Sync on Wi-Fi only</string>
 
     <string name="sso_google_button">Sign in with Google</string>

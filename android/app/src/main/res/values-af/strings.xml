@@ -24,6 +24,7 @@
     <string name="language_zulu">isiZulu</string>
     <string name="language_afrikaans">Afrikaans</string>
     <string name="enable_notifications">Aktiveer kennisgewings</string>
+    <string name="test_push_notification">Toets Stootkennisgewing</string>
     <string name="sync_wifi_only">Sinkroniseer slegs op Wi-Fi</string>
 
     <string name="sso_google_button">Meld aan met Google</string>

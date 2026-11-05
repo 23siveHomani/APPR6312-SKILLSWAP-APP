@@ -1,6 +1,7 @@
 const express = require('express');
 const User = require('../models/User');
 const { requireAuth } = require('../middleware/auth');
+const { notifyUser } = require('../services/notificationService');
 
 const router = express.Router();
 
@@ -30,6 +31,21 @@ router.patch('/me', requireAuth, async (req, res) => {
   } catch (err) {
     console.error('[users/me PATCH]', err);
     return res.status(500).json({ error: 'Failed to update settings' });
+  }
+});
+
+// POST /users/test-notification
+router.post('/test-notification', requireAuth, async (req, res) => {
+  try {
+    const { title, body } = req.body;
+    const notificationTitle = title || 'SkillSwap Push Alert';
+    const notificationBody = body || 'You have a new skill swap request!';
+
+    await notifyUser(req.userId, notificationTitle, notificationBody);
+    return res.json({ success: true, message: 'Push notification triggered' });
+  } catch (err) {
+    console.error('[test-notification]', err);
+    return res.status(500).json({ error: 'Failed to send test notification' });
   }
 });
 

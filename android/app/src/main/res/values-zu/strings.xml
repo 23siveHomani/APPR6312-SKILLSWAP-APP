@@ -24,6 +24,7 @@
     <string name="language_zulu">IsiZulu</string>
     <string name="language_afrikaans">IsiBhunu</string>
     <string name="enable_notifications">Vumela izaziso</string>
+    <string name="test_push_notification">Hlola Isaziso Sokusunduza</string>
     <string name="sync_wifi_only">Vumelanisa nge-Wi-Fi kuphela</string>
 
     <string name="sso_google_button">Ngena nge-Google</string>
