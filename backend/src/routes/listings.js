@@ -6,52 +6,56 @@ const { requireAuth } = require('../middleware/auth');
 const router = express.Router();
 
 async function seedDefaultListings(defaultOwnerId) {
-  const count = await SkillListing.countDocuments();
-  if (count === 0) {
-    let ownerId = defaultOwnerId;
-    if (!ownerId) {
-      let demoUser = await User.findOne();
-      if (!demoUser) {
-        demoUser = await User.create({
-          name: 'Asive Homani',
-          email: 'asive.seed@example.com',
-          passwordHash: 'dummy'
-        });
+  try {
+    const count = await SkillListing.countDocuments();
+    if (count === 0) {
+      let ownerId = defaultOwnerId;
+      if (!ownerId) {
+        let demoUser = await User.findOne();
+        if (!demoUser) {
+          demoUser = await User.create({
+            name: 'Asive Homani',
+            email: 'asive.seed@example.com',
+            passwordHash: 'dummy'
+          });
+        }
+        ownerId = demoUser._id;
       }
-      ownerId = demoUser._id;
-    }
 
-    await SkillListing.create([
-      {
-        ownerId,
-        title: 'Basic Zulu Conversation Tutoring',
-        category: 'Tutoring',
-        description: 'One-on-one Zulu conversation practice and pronunciation tips for beginners.',
-        imageUrl: 'https://storage.googleapis.com/skillswap-blobs/zulu_tutoring.jpg'
-      },
-      {
-        ownerId,
-        title: 'Logo & Graphic Design Help',
-        category: 'Design',
-        description: 'Need help designing a brand logo, flyer, or social media banner? I can help!',
-        imageUrl: 'https://storage.googleapis.com/skillswap-blobs/graphic_design.png'
-      },
-      {
-        ownerId,
-        title: 'Android & Computer Tech Support',
-        category: 'Tech Help',
-        description: 'Assistance setting up Android apps, Wi-Fi connections, or computer troubleshooting.',
-        imageUrl: 'https://storage.googleapis.com/skillswap-blobs/tech_support.jpg'
-      },
-      {
-        ownerId,
-        title: 'Home Repairs & Handyman Services',
-        category: 'Home Repairs',
-        description: 'Light plumbing, shelf mounting, or furniture assembly in exchange for skill tutoring.',
-        imageUrl: 'https://storage.googleapis.com/skillswap-blobs/home_repair.jpg'
-      }
-    ]);
-    console.log('[seed] Initial sample skill listings seeded automatically!');
+      await SkillListing.create([
+        {
+          ownerId,
+          title: 'Basic Zulu Conversation Tutoring',
+          category: 'Tutoring',
+          description: 'One-on-one Zulu conversation practice and pronunciation tips for beginners.',
+          imageUrl: 'https://storage.googleapis.com/skillswap-blobs/zulu_tutoring.jpg'
+        },
+        {
+          ownerId,
+          title: 'Logo & Graphic Design Help',
+          category: 'Crafts',
+          description: 'Need help designing a brand logo, flyer, or social media banner? I can help!',
+          imageUrl: 'https://storage.googleapis.com/skillswap-blobs/graphic_design.png'
+        },
+        {
+          ownerId,
+          title: 'Android & Computer Tech Support',
+          category: 'Tech Help',
+          description: 'Assistance setting up Android apps, Wi-Fi connections, or computer troubleshooting.',
+          imageUrl: 'https://storage.googleapis.com/skillswap-blobs/tech_support.jpg'
+        },
+        {
+          ownerId,
+          title: 'Home Repairs & Handyman Services',
+          category: 'Home & Garden',
+          description: 'Light plumbing, shelf mounting, or furniture assembly in exchange for skill tutoring.',
+          imageUrl: 'https://storage.googleapis.com/skillswap-blobs/home_repair.jpg'
+        }
+      ]);
+      console.log('[seed] Initial sample skill listings seeded successfully!');
+    }
+  } catch (err) {
+    console.error('[seed error]', err.message);
   }
 }
 

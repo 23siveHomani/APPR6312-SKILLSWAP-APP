@@ -6,15 +6,14 @@ const skillListingSchema = new mongoose.Schema(
     title: { type: String, required: true, trim: true, maxlength: 100 },
     category: {
       type: String,
-      enum: ['Home & Garden', 'Tutoring', 'Tech Help', 'Crafts', 'Other'],
       required: true,
+      trim: true,
     },
     description: { type: String, maxlength: 500, default: '' },
-    // GeoJSON Point, as specified in the Part 1 data dictionary, so we can
-    // do distance-based search with a 2dsphere index.
+    imageUrl: { type: String, default: null },
     location: {
       type: { type: String, enum: ['Point'], default: 'Point' },
-      coordinates: { type: [Number], default: [0, 0] }, // [lng, lat]
+      coordinates: { type: [Number], default: [0, 0] },
     },
   },
   { timestamps: true }
