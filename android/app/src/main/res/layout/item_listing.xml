@@ -39,5 +39,24 @@
             android:ellipsize="end"
             tools:text="One-on-one Zulu conversation practice, beginner friendly." />
 
+        <TextView
+            android:id="@+id/tvOwner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:textColor="#1976D2"
+            android:textSize="12sp"
+            tools:text="Offered by: Asive" />
+
+        <TextView
+            android:id="@+id/tvImageUrl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="#757575"
+            android:textSize="11sp"
+            android:visibility="gone"
+            tools:text="Blob storage: https://storage.googleapis.com/..." />
+
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

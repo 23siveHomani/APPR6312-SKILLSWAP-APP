@@ -1,10 +1,12 @@
 package com.skillswap.app.ui.home
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.skillswap.app.R
 import com.skillswap.app.data.model.SkillListing
 import com.skillswap.app.databinding.ItemListingBinding
 
@@ -21,9 +23,25 @@ class ListingAdapter : ListAdapter<SkillListing, ListingAdapter.ViewHolder>(DIFF
 
     class ViewHolder(private val binding: ItemListingBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(listing: SkillListing) {
+            val context = binding.root.context
             binding.tvTitle.text = listing.title
             binding.tvCategory.text = listing.category
             binding.tvDescription.text = listing.description.orEmpty()
+
+            val ownerName = listing.ownerId?.name
+            if (!ownerName.isNullOrBlank()) {
+                binding.tvOwner.text = context.getString(R.string.offered_by, ownerName)
+                binding.tvOwner.visibility = View.VISIBLE
+            } else {
+                binding.tvOwner.visibility = View.GONE
+            }
+
+            if (!listing.imageUrl.isNullOrBlank()) {
+                binding.tvImageUrl.text = context.getString(R.string.blob_asset, listing.imageUrl)
+                binding.tvImageUrl.visibility = View.VISIBLE
+            } else {
+                binding.tvImageUrl.visibility = View.GONE
+            }
         }
     }
 

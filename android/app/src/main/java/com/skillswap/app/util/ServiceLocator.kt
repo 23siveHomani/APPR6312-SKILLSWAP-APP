@@ -10,8 +10,7 @@ import com.skillswap.app.data.repository.ListingRepository
 /**
  * Deliberately simple hand-rolled service locator instead of a DI framework
  * (Hilt/Koin) - keeps the moving parts easy to explain in the README and in
- * the demo video, appropriate for a Part 2 prototype. Swapping this for Hilt
- * later would only touch this one file.
+ * the demo video.
  */
 object ServiceLocator {
 
@@ -31,6 +30,13 @@ object ServiceLocator {
     fun authRepository(context: Context): AuthRepository =
         AuthRepository(apiService(context), sessionManager(context))
 
-    fun listingRepository(context: Context): ListingRepository =
-        ListingRepository(apiService(context), AppDatabase.getInstance(context).listingDao())
+    fun listingRepository(context: Context): ListingRepository {
+        val db = AppDatabase.getInstance(context)
+        return ListingRepository(
+            apiService(context),
+            db.listingDao(),
+            db.pendingSyncDao(),
+            context.applicationContext
+        )
+    }
 }

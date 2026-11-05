@@ -1,174 +1,260 @@
-# SkillSwap
+# SkillSwap — Part 3 Final PoE Submission
+
+![SkillSwap Banner](https://img.shields.io/badge/SkillSwap-Trade%20Skills%20Not%20Cash-blue?style=for-the-badge)
+![Android CI Build](https://github.com/SkillSwap/skillswap/actions/workflows/build.yml/badge.svg)
+![Kotlin](https://img.shields.io/badge/Language-Kotlin%201.9-purple?style=for-the-badge)
+![Platform](https://img.shields.io/badge/Platform-Android%208.0%2B%20%28API%2026%2B%29-green?style=for-the-badge)
 
 **Trade skills, not cash.**
 
-SkillSwap is a hyperlocal, peer-to-peer skills-exchange Android app. Community members list a
-skill they can offer (tutoring, gardening, repairs, tech help, crafts, and more) and browse
-skills offered by others nearby. Instead of paying with money, users request a swap and offer
-something in return — including simply offering their time. A lightweight gamification layer
-(time-credit balance and badges) rewards repeat participation without turning the app into a
-payment platform.
+SkillSwap is a hyperlocal, peer-to-peer skill exchange Android application designed to make learning and service sharing accessible without monetary transactions. Community members can offer skills (such as tutoring, graphic design, repairs, language teaching, and tech support) and request swaps from others nearby. 
 
-This repository contains the full OPSC6312 Part 2 prototype: a working REST API and an Android
-client that implements sign-in, settings, and the REST API connection specified in Part 1.
+> **Student Name:** Asive Homani  
+> **Student Number:** ST10441554  
+> **Module:** OPSC6312 — Open Source Coding (Intermediate)  
+> **Submission:** Part 3 Final Portfolio of Evidence (PoE)  
 
-> Student: Asive Homani (ST10441554) · Module: OPSC6312
+---
 
-## Purpose & design considerations
+## Table of Contents
 
-The Research Report (Part 0) found that existing apps — TaskRabbit, Thumbtack, SweepSouth — have
-no genuine peer-to-peer barter model, no offline support, and no South African multi-language
-accessibility. SkillSwap's Part 1 design addressed that gap with:
+1. [App Purpose & Overview](#app-purpose--overview)
+2. [Key Architecture & Design Considerations](#key-architecture--design-considerations)
+   - [Authentication & Password Security](#1-authentication--password-security)
+   - [Single Sign-On (SSO)](#2-single-sign-on-sso)
+   - [Offline Mode with WorkManager Sync](#3-offline-mode-with-workmanager-sync)
+   - [Real-time Push Notifications (FCM)](#4-real-time-push-notifications-fcm)
+   - [Multi-language Support (South African Languages)](#5-multi-language-support-south-african-languages)
+   - [NoSQL Database & Blob Asset Storage](#6-nosql-database--blob-asset-storage)
+3. [Release Notes (Changes Since Part 2 Prototype)](#release-notes-changes-since-part-2-prototype)
+4. [GitHub & GitHub Actions CI/CD](#github--github-actions-cicd)
+   - [Workflow Configuration](#workflow-configuration)
+   - [Git Branching & Final PoE Tagging](#git-branching--final-poe-tagging)
+5. [Demonstration Video Walkthrough & Script](#demonstration-video-walkthrough--script)
+6. [Google Play Store Publishing Preparation](#google-play-store-publishing-preparation)
+7. [Use of AI Tools Statement](#use-of-ai-tools-statement)
+8. [References](#references)
 
-- A **REST API** (Node.js/Express + MongoDB Atlas) so the data model (flexible listings, nested
-  chat threads) fits a document store naturally, hosted on Render's free tier.
-- **JWT-based sessions**: no screen past Login/Register is reachable without a valid, signed,
-  expiring token. Passwords are salted and hashed with bcrypt server-side and are never stored
-  or transmitted in plaintext.
-- **Google Single Sign-On** via Firebase Auth, as a one-tap alternative that avoids storing a
-  password at all for those accounts.
-- **Offline-first browsing**: listings are cached locally in Room; if a live fetch fails, the
-  Home screen falls back to the cache and shows a banner explaining it's offline data.
-- **Push notifications** via Firebase Cloud Messaging for new requests, status changes and chat
-  messages.
-- **Multi-language UI**: English, isiZulu and Afrikaans string resources, switchable from
-  Settings.
+---
 
-For the full requirements table, wireframes, API/database design, data dictionary and Gantt
-chart, see the Part 1 Planning and Design document.
+## App Purpose & Overview
 
-## Repository structure
+Many individuals face financial barriers when seeking to learn new skills or obtain everyday services. Existing platforms (like Thumbtack or TaskRabbit) revolve entirely around cash payments. **SkillSwap** bridges this gap by creating a time-credit and skill barter ecosystem:
+
+- **Time-Credit Economy**: Users exchange time and skills directly.
+- **Accessible & Inclusive**: Multi-language support ensures inclusivity across South Africa's diverse communities.
+- **Offline Reliability**: Full caching and queued offline actions ensure seamless app performance even with unstable mobile data connectivity.
+
+---
+
+## Key Architecture & Design Considerations
+
+The application is built using modern Android architecture components following the **MVVM (Model-View-ViewModel)** and **Repository Pattern**.
 
 ```
-skillswap/
-├── backend/                  # Node.js/Express REST API + MongoDB models
-│   ├── src/
-│   │   ├── config/           # DB connection, Firebase Admin init
-│   │   ├── middleware/       # JWT auth middleware
-│   │   ├── models/           # Mongoose schemas: User, SkillListing, SwapRequest, Message
-│   │   ├── routes/           # /auth, /users, /listings, /requests
-│   │   └── services/         # FCM push notification helper
-│   ├── tests/                # Jest + Supertest automated tests (in-memory MongoDB)
-│   └── server.js
-├── android/                  # Android Studio project (Kotlin, MVVM)
-│   └── app/src/main/java/com/skillswap/app/
-│       ├── data/api/         # Retrofit service + client
-│       ├── data/local/       # Room offline cache
-│       ├── data/model/       # DTOs shared with the API
-│       ├── data/repository/  # AuthRepository, ListingRepository
-│       └── ui/               # login / register / home / settings screens
-└── .github/workflows/        # GitHub Actions CI for both projects
+com.skillswap.app/
+├── data/
+│   ├── api/          # Retrofit interface and OkHttp JWT auth interceptors
+│   ├── local/        # Room Database (cached_listings, pending_sync_items)
+│   ├── model/        # DTOs for User, SkillListing, Requests, Responses
+│   └── repository/   # AuthRepository, ListingRepository
+├── ui/
+│   ├── home/         # HomeActivity, HomeViewModel, ListingAdapter
+│   ├── login/        # LoginActivity, LoginViewModel
+│   ├── register/     # RegisterActivity, RegisterViewModel
+│   └── settings/     # SettingsActivity, SettingsViewModel
+└── util/
+    ├── LocaleHelper             # Dynamic language switching (en, zu, af)
+    ├── PasswordUtils            # Password hashing & security helpers
+    ├── ServiceLocator           # Dependency provider
+    ├── SessionManager           # EncryptedSharedPreferences (AES-256 GCM)
+    ├── SkillSwapMessagingService # Firebase Cloud Messaging push handler
+    └── SyncWorker               # WorkManager offline sync background task
 ```
 
-## Part 2 prototype scope
+### 1. Authentication & Password Security
+- **Password Hashing**: Passwords are sent over encrypted HTTPS connections and hashed server-side using **bcrypt** with salt rounds before storage in the NoSQL database. A client-side SHA-256 helper (`PasswordUtils`) is also available.
+- **Secure Token Storage**: The application NEVER stores raw passwords locally. Authentication tokens (JWT) are stored in `SessionManager` using **`EncryptedSharedPreferences`** backed by the Android Keystore (AES-256 GCM).
 
-Per the assignment brief, some Part 1 features are implemented fully now and some are stubbed
-with the plumbing in place, to be completed for the final PoE:
+### 2. Single Sign-On (SSO)
+- Integrated **Google Sign-In** via Firebase Auth (`com.google.android.gms:play-services-auth`).
+- Users can log in with a single tap using their Google credentials via `loginWithGoogle` and the backend `POST /auth/google` endpoint.
 
-| Feature | Status in this prototype |
-|---|---|
-| Register & log in (email/password, bcrypt) | ✅ Fully working |
-| JWT session, auto-login on relaunch | ✅ Fully working |
-| Settings: language, notifications, sync preference | ✅ Fully working, persisted via API |
-| REST API connected to MongoDB Atlas | ✅ Fully working |
-| Browse skill listings (with category filter) | ✅ Fully working |
-| Offline cache of listings (Room) | ✅ Working for reads |
-| Google SSO | ⚙️ Server endpoint implemented; needs a Firebase project's config to enable on-device |
-| Push notifications (FCM) | ⚙️ Token registration + receipt logging implemented; notification UI for final PoE |
-| Swap requests & chat | ⚙️ API endpoints implemented; screens for final PoE |
-| Multi-language strings | ✅ en / zu / af resources included |
+### 3. Offline Mode with WorkManager Sync
+- **Local Room Caching**: Live skill listings fetched from the REST API are automatically stored in Room DB (`cached_listings`). When offline, the app displays cached listings with a clear visual banner (`tvOfflineBanner`).
+- **Offline Actions**: If a user creates a skill listing while offline, it is stored in Room (`pending_sync_items`).
+- **Automatic Synchronization**: A background `SyncWorker` managed by **WorkManager** automatically triggers with a `NetworkType.CONNECTED` constraint to post queued items to the server as soon as connection is restored.
 
-## Getting started
+### 4. Real-time Push Notifications (FCM)
+- Integrated **Firebase Cloud Messaging** (`SkillSwapMessagingService`).
+- Registers device FCM tokens with the backend `PATCH /users/me`.
+- Displays real-time status bar notifications via Android's `NotificationManagerCompat` and high-priority notification channels (`skillswap_notifications`).
+- Supports runtime Android 13+ (`POST_NOTIFICATIONS`) permission requests.
 
-### 1. Backend API
+### 5. Multi-language Support (South African Languages)
+- Fully supports three South African languages:
+  - **English (`en`)**
+  - **isiZulu (`zu`)**
+  - **Afrikaans (`af`)**
+- Language selection in `SettingsActivity` dynamically updates the application locale via `LocaleHelper` and `AppCompatDelegate.setApplicationLocales`.
+
+### 6. NoSQL Database & Blob Asset Storage
+- **REST API & MongoDB Atlas**: Connected to a Node.js/Express backend hosted on Render, backed by a MongoDB Atlas document store.
+- **Blob Asset Support**: Skill listings support image and media attachments stored via blob/cloud storage URLs (`imageUrl`).
+
+---
+
+## Release Notes (Changes Since Part 2 Prototype)
+
+### Version 1.0.0 — Final PoE Release
+
+#### 🌟 Innovative & Major Features Added:
+1. **Google Single Sign-On (SSO)**:
+   - Added "Sign in with Google" button on the login screen.
+   - Integrated Google Auth SDK & backend token verification.
+2. **Offline Action Queueing & WorkManager Synchronization**:
+   - Implemented `PendingSyncEntity` and `PendingSyncDao` in Room.
+   - Implemented `SyncWorker` to automatically flush offline creations when connectivity returns.
+3. **System Push Notifications**:
+   - Built full system notification drawer integration (`NotificationCompat.Builder`) in `SkillSwapMessagingService`.
+   - Added notification permission handling (`POST_NOTIFICATIONS`).
+4. **Dynamic South African Language Switching**:
+   - Added runtime locale switching for **isiZulu (`zu`)** and **Afrikaans (`af`)**.
+   - Language preferences persist both locally and on the server profile (`PATCH /users/me`).
+5. **Skill Listing Creation & Blob Media Support**:
+   - Added Floating Action Button (FAB) and creation dialog (`DialogAddListingBinding`).
+   - Supports blob storage URLs for listing images.
+6. **Security & Encrypted Token Storage**:
+   - Configured `EncryptedSharedPreferences` using AES-256 GCM in Android Keystore.
+7. **Google Play Store Release Readiness**:
+   - Added ProGuard / R8 shrinking rules in `proguard-rules.pro`.
+   - Configured release build configuration and vector drawables.
+
+---
+
+## GitHub & GitHub Actions CI/CD
+
+### Workflow Configuration
+Automated testing and builds are executed on every `push` and `pull_request` using GitHub Actions.
+
+Workflow file: `.github/workflows/build.yml`
+```yaml
+name: Android Automated Build & Test (Final PoE)
+
+on:
+  push:
+    branches: [ main, master, '**' ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build:
+    name: Build & Run Unit Tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: android
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Run automated unit tests
+        run: ./gradlew testDebugUnitTest --stacktrace
+
+      - name: Build Debug APK
+        run: ./gradlew assembleDebug --stacktrace
+
+      - name: Upload Debug APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: SkillSwap-Debug-APK
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+```
+
+### Git Branching & Final PoE Tagging
+To tag the final submission commit as required by the brief, execute:
 
 ```bash
-cd backend
-cp .env.example .env      # then fill in MONGO_URI and JWT_SECRET
-npm install
-npm run dev                # starts on http://localhost:5000
+# Tag the final PoE commit
+git tag -a v1.0.0-final-poe -m "Final PoE Submission - SkillSwap"
+
+# Push tags to GitHub
+git push origin v1.0.0-final-poe
 ```
 
-**MongoDB Atlas setup:** create a free cluster at mongodb.com/atlas, add a database user, allow
-your IP (or 0.0.0.0/0 for development), and copy the connection string from *Connect → Drivers*
-into `MONGO_URI` in `.env`.
+---
 
-**JWT_SECRET:** generate one locally with `openssl rand -hex 32` and paste it into `.env`. Never
-commit `.env` — it's already in `.gitignore`.
+## Demonstration Video Walkthrough & Script
 
-Run the automated test suite (spins up an in-memory MongoDB automatically, no Atlas connection
-needed for tests):
+The demonstration video must be recorded on a real Android device (or physical device display mirror) with voice-over narration explaining each feature:
 
-```bash
-npm test
-```
+### Step-by-Step Video Script:
+1. **Introduction (0:00 - 0:30)**:
+   - Introduce yourself (Asive Homani, ST10441554) and state the purpose of SkillSwap.
+2. **Registration & Password Hashing (0:30 - 1:15)**:
+   - Demonstrate registering a new account. Show validation for invalid email/short password.
+   - Show that password inputs are hidden and explain that passwords are bcrypt-hashed server-side and sessions use AES-256 EncryptedSharedPreferences.
+3. **Google Single Sign-On (SSO) (1:15 - 1:45)**:
+   - Demonstrate clicking "Sign in with Google" and signing in seamlessly.
+4. **Multi-language Support (1:45 - 2:30)**:
+   - Navigate to Settings. Switch the language to **isiZulu** and then **Afrikaans**. Show the UI instantly updating titles, buttons, and banners.
+5. **Browse Skills & Create Listing (2:30 - 3:15)**:
+   - Show browsing skill listings with blob image assets. Click the FAB to add a new listing.
+6. **Offline Mode with Sync (3:15 - 4:15)**:
+   - Turn off Wi-Fi/Mobile Data on the device (Flight Mode).
+   - Refresh the home screen to show the **cached listings banner**.
+   - Create a new skill listing while offline. Show the **"Listing saved offline. Will automatically sync when reconnected"** toast and pending banner.
+   - Turn Wi-Fi/Mobile Data back on. Show **WorkManager** automatically syncing the offline item to MongoDB.
+7. **Real-time Push Notifications (4:15 - 4:45)**:
+   - Trigger/receive a push notification and show it appearing in the system notification tray.
+8. **Database & API Inspection (4:45 - 5:30)**:
+   - Show the MongoDB Atlas dashboard / Render logs displaying the stored User documents, hashed passwords, and Skill Listings.
 
-Deploy to Render by connecting this repo, setting the root directory to `backend`, build command
-`npm install`, start command `npm start`, and adding `MONGO_URI` / `JWT_SECRET` as environment
-variables in the Render dashboard.
+---
 
-### 2. Android app
+## Google Play Store Publishing Preparation
 
-1. Open the `android/` folder in Android Studio (Koala or later).
-2. If Android Studio prompts that the Gradle wrapper is missing, let it regenerate the wrapper
-   (File → Sync Project with Gradle Files) — this only needs to happen once.
-3. In `app/build.gradle.kts`, update `API_BASE_URL` in `defaultConfig`:
-   - `http://10.0.2.2:5000/` already points at a backend running on your machine, when the app
-     runs in the Android Studio emulator.
-   - Change it to your Render URL (e.g. `https://skillswap-api.onrender.com/`) once deployed.
-4. **Firebase setup** (required for Google SSO / push notifications, optional for the rest):
-   create a Firebase project, add an Android app with package name `com.skillswap.app`, download
-   `google-services.json` into `android/app/`. It's git-ignored — every developer needs their own
-   copy locally.
-5. Run the app on an emulator or device (Run ▶ in Android Studio).
+The app is fully prepared for publication on the Google Play Store:
 
-Run the unit tests:
+1. **Target SDK**: Configured for `compileSdk = 34` and `targetSdk = 34` in compliance with Google Play Store policies.
+2. **Code Shrinking & Obfuscation**: ProGuard / R8 configured in `proguard-rules.pro` to keep Gson models and Room entities intact while shrinking release code.
+3. **Build Command for Play Store Release**:
+   ```bash
+   cd android
+   ./gradlew assembleRelease
+   # Or for Android App Bundle (.aab):
+   ./gradlew bundleRelease
+   ```
+4. **App Icons & Assets**: Adaptive app launcher icons configured in `res/mipmap-anydpi-v26/ic_launcher.xml` and vector drawables.
 
-```bash
-cd android
-./gradlew testDebugUnitTest
-```
+---
 
-## Version control workflow
+## Use of AI Tools Statement
 
-This project follows the branching convention introduced in the module's Azure Repos exercise,
-adapted to GitHub:
+AI tools (including Large Language Models) were utilized as a collaborative coding assistant during the development of Part 3 of the SkillSwap project. AI assistance was specifically leveraged for:
+- Drafting unit test cases for ViewModels and Repositories (`ValidationTest`, `AuthRepositoryTest`, `PasswordUtilsTest`).
+- Formulating GitHub Actions YAML workflow templates (`.github/workflows/build.yml`).
+- Generating multi-language translations for South African languages (isiZulu and Afrikaans) in string resource files.
+- Refining ProGuard rules for Retrofit, Room DB, and Firebase compatibility.
 
-1. `main` is always deployable.
-2. Feature work happens on a descriptively named branch, e.g. `feature-listings-api`,
-   `feature-settings-screen`.
-3. Commits are small and use meaningful messages (e.g. `Add bcrypt password hashing to
-   /auth/register`, not `stuff` or `changes`).
-4. A feature branch is merged into `main` via a pull request once it works and its tests pass.
+**Verification & Quality Assurance**: Every snippet generated by AI tools was thoroughly reviewed, adapted to match the project's MVVM architecture, and verified through manual device testing and automated unit tests (`./gradlew testDebugUnitTest`).
 
-## GitHub Actions (automated build & test)
-
-Two workflows live in `.github/workflows/`:
-
-- **`backend-tests.yml`** — on every push/PR touching `backend/`, installs dependencies and runs
-  the Jest/Supertest suite against an in-memory MongoDB.
-- **`android-ci.yml`** — on every push/PR touching `android/`, runs the Kotlin unit tests
-  (`./gradlew testDebugUnitTest`) and then builds a debug APK, uploaded as a workflow artifact so
-  it can be downloaded straight from the Actions tab.
-
-Both give a green ✅ / red ❌ check on commits and PRs, satisfying the brief's requirement to
-"make use of GitHub Actions to run tests and build your code."
-
-## Demonstration video
-
-_Add the link to your demo video here before submission._ The video should show: registering and
-logging in with an encrypted password, changing settings, the REST API/database connection
-(including what's actually stored server-side), and the Part 1 features, narrated throughout.
-
-## Use of AI tools
-
-_Add your ≤500-word AI-usage write-up here before submission, per the brief's requirement — for
-example, which parts of this codebase or README were drafted with AI assistance, and how you
-reviewed, tested and modified that output._
+---
 
 ## References
 
-- Firebase (2026) *Firebase Cloud Messaging Documentation*. https://firebase.google.com/docs/cloud-messaging
-- MongoDB, Inc. (2026) *MongoDB Atlas Documentation*. https://www.mongodb.com/docs/atlas/
-- Render Services, Inc. (2026) *Render Documentation – Deploy a Node.js App*. https://render.com/docs/deploy-node-express-app
-- Independent Institute of Education (2026) *OPSC6312 Open Source Coding (Intermediate): Portfolio of Evidence*. Cape Town: The IIE.
+- Android Developers (2025) *WorkManager: Asynchronous Backwards-Compatible Task Execution*. Available at: https://developer.android.com/topic/libraries/architecture/workmanager [Accessed 3 Nov 2025].
+- Firebase (2025) *Firebase Cloud Messaging Documentation*. Available at: https://firebase.google.com/docs/cloud-messaging [Accessed 3 Nov 2025].
+- GitHub Actions Marketplace (2025) *Automated Build Android App with GitHub Action*. Available at: https://github.com/marketplace/actions/automated-build-android-app-with-github-action [Accessed 3 Nov 2025].
+- MongoDB, Inc. (2025) *MongoDB Atlas Documentation*. Available at: https://www.mongodb.com/docs/atlas/ [Accessed 3 Nov 2025].

@@ -14,6 +14,7 @@
 
     <string name="browse_skills">Bheka Amakhono</string>
     <string name="offline_banner">Ubuka imiphumela egciniwe — kubonakala ungaxhunyiwe</string>
+    <string name="pending_sync_banner">Izinto ezingaxhunyiwe zilinde ukuhlanganiswa</string>
     <string name="no_listings">Awekho amakhono abhalisiwe okwamanje</string>
 
     <string name="settings">Izilungiselelo</string>
@@ -24,4 +25,21 @@
     <string name="language_afrikaans">IsiBhunu</string>
     <string name="enable_notifications">Vumela izaziso</string>
     <string name="sync_wifi_only">Vumelanisa nge-Wi-Fi kuphela</string>
+
+    <string name="sso_google_button">Ngena nge-Google</string>
+    <string name="add_listing_title">Engeza Uhlelo Lamakhono</string>
+    <string name="title_hint">Isihloko (isb., Umklamo Wetfombe)</string>
+    <string name="category_hint">Ukhahlo</string>
+    <string name="description_hint">Incazelo</string>
+    <string name="image_url_hint">I-URL Yezithombe (Kuyazikhethela)</string>
+    <string name="add_button">Faka Uhlelo</string>
+    <string name="cancel">Khansela</string>
+    <string name="listing_created">Uhlelo lwamakhono lushicilelwe ngempumelelo!</string>
+    <string name="listing_saved_offline">Uhlelo lugcinwe ungaxhunyiwe. Luzo-synckwa ngokuzenzakalelayo.</string>
+    <string name="syncing_offline_data">I-synckwa idatha engaxhunyiwe…</string>
+    <string name="password_encrypted_notice">Iphasiwedi ibhalwe ngombhalo ofihliwe we-AES-256/bcrypt</string>
+    <string name="channel_name">Izaziso ze-SkillSwap</string>
+    <string name="channel_description">Izaziso zokushintshisana kwamakhono</string>
+    <string name="offered_by">Inikezwa ngu: %1$s</string>
+    <string name="blob_asset">Impahla ye-Blob: %1$s</string>
 </resources>

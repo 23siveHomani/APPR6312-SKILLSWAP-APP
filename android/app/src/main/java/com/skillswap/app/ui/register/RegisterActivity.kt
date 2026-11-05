@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.skillswap.app.databinding.ActivityRegisterBinding
 import com.skillswap.app.ui.home.HomeActivity
+import com.skillswap.app.util.LocaleHelper
 import com.skillswap.app.util.ServiceLocator
 import com.skillswap.app.util.ViewModelFactory
 
@@ -17,6 +18,8 @@ class RegisterActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        LocaleHelper.applySavedLocale(this)
+
         binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
 

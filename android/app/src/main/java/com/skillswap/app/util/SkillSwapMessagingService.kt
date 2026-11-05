@@ -1,20 +1,23 @@
 package com.skillswap.app.util
 
+import android.app.PendingIntent
+import android.content.Intent
 import android.util.Log
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import com.skillswap.app.R
+import com.skillswap.app.SkillSwapApp
 import com.skillswap.app.data.model.SettingsUpdateRequest
+import com.skillswap.app.ui.home.HomeActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 /**
  * Receives FCM pushes for new swap requests, status changes and chat
- * messages (Part 1 section 5, "Notification Service"). Real display of the
- * notification (building a Notification + NotificationManager.notify) is
- * deferred to the final PoE per the assignment brief; this class covers the
- * required plumbing - token registration and message receipt logging - for
- * the Part 2 prototype.
+ * messages. Shows real-time push notifications in the Android notification tray.
  */
 class SkillSwapMessagingService : FirebaseMessagingService() {
 
@@ -36,7 +39,37 @@ class SkillSwapMessagingService : FirebaseMessagingService() {
 
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
-        Log.i(TAG, "Push received: ${message.notification?.title} - ${message.notification?.body}")
+        val title = message.notification?.title ?: message.data["title"] ?: "SkillSwap Alert"
+        val body = message.notification?.body ?: message.data["body"] ?: "You have a new update."
+
+        Log.i(TAG, "Push received: $title - $body")
+        showNotification(title, body)
+    }
+
+    private fun showNotification(title: String, body: String) {
+        val intent = Intent(this, HomeActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+        val pendingIntent = PendingIntent.getActivity(
+            this, 0, intent,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
+
+        val builder = NotificationCompat.Builder(this, SkillSwapApp.CHANNEL_ID)
+            .setSmallIcon(R.drawable.ic_back)
+            .setContentTitle(title)
+            .setContentText(body)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setContentIntent(pendingIntent)
+            .setAutoCancel(true)
+
+        try {
+            with(NotificationManagerCompat.from(this)) {
+                notify(System.currentTimeMillis().toInt(), builder.build())
+            }
+        } catch (e: SecurityException) {
+            Log.e(TAG, "Notification permission missing", e)
+        }
     }
 
     companion object {

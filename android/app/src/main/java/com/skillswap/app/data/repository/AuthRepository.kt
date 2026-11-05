@@ -49,6 +49,21 @@ class AuthRepository(
         }
     }
 
+    suspend fun loginWithGoogle(idToken: String): ApiResult<User> {
+        return try {
+            val response = api.loginWithGoogle(GoogleAuthRequest(idToken))
+            if (response.isSuccessful && response.body() != null) {
+                val body = response.body()!!
+                sessionManager.saveToken(body.token)
+                ApiResult.Success(body.user)
+            } else {
+                ApiResult.Failure(parseError(response.errorBody()?.string()))
+            }
+        } catch (e: Exception) {
+            ApiResult.Failure(e.message ?: "Network error")
+        }
+    }
+
     suspend fun updateSettings(update: SettingsUpdateRequest): ApiResult<User> {
         return try {
             val response = api.updateSettings(update)

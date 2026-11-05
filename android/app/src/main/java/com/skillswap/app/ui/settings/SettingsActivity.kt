@@ -5,13 +5,14 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.skillswap.app.data.model.User
 import com.skillswap.app.databinding.ActivitySettingsBinding
 import com.skillswap.app.ui.login.LoginActivity
+import com.skillswap.app.util.LocaleHelper
 import com.skillswap.app.util.ServiceLocator
 import com.skillswap.app.util.ViewModelFactory
 import kotlinx.coroutines.launch
-import androidx.lifecycle.lifecycleScope
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -21,6 +22,8 @@ class SettingsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        LocaleHelper.applySavedLocale(this)
+
         binding = ActivitySettingsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -32,8 +35,6 @@ class SettingsActivity : AppCompatActivity() {
             ViewModelFactory { SettingsViewModel(authRepository) }
         )[SettingsViewModel::class.java]
 
-        // Fetch the current profile fresh from the API so the switches reflect
-        // whatever was last saved (possibly from a different device/session).
         lifecycleScope.launch {
             val api = ServiceLocator.apiService(this@SettingsActivity)
             val response = api.getMe()
@@ -45,6 +46,7 @@ class SettingsActivity : AppCompatActivity() {
         binding.rgLanguage.setOnCheckedChangeListener { group, checkedId ->
             if (suppressLanguageCallback) return@setOnCheckedChangeListener
             val tag = group.findViewById<View>(checkedId)?.tag as? String ?: return@setOnCheckedChangeListener
+            LocaleHelper.saveLanguage(this, tag)
             viewModel.updateLanguage(tag)
         }
 
@@ -58,7 +60,10 @@ class SettingsActivity : AppCompatActivity() {
 
         binding.btnLogout.setOnClickListener {
             viewModel.logout()
-            startActivity(Intent(this, LoginActivity::class.java))
+            val intent = Intent(this, LoginActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            }
+            startActivity(intent)
             finish()
         }
 

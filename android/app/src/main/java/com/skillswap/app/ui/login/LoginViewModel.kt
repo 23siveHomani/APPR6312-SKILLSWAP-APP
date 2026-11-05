@@ -37,10 +37,18 @@ class LoginViewModel(private val authRepository: AuthRepository) : ViewModel() {
         }
     }
 
+    fun loginWithGoogle(idToken: String) {
+        _uiState.value = LoginUiState.Loading
+        viewModelScope.launch {
+            when (val result = authRepository.loginWithGoogle(idToken)) {
+                is ApiResult.Success -> _uiState.value = LoginUiState.Success(result.data)
+                is ApiResult.Failure -> _uiState.value = LoginUiState.Error(result.message)
+            }
+        }
+    }
+
     /**
-     * Exposed as a standalone function so it can be unit tested with plain JUnit
-     * (no Robolectric/instrumentation needed). Uses a simple regex rather than
-     * android.util.Patterns, which is unavailable outside the Android runtime.
+     * Exposed as a standalone function so it can be unit tested with plain JUnit.
      */
     fun validate(email: String, password: String): String? {
         if (email.isBlank() || !EMAIL_REGEX.matches(email.trim())) {

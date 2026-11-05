@@ -14,6 +14,7 @@
 
     <string name="browse_skills">Browse Skills</string>
     <string name="offline_banner">You\'re viewing cached results — you appear to be offline</string>
+    <string name="pending_sync_banner">Offline items queued for sync when online</string>
     <string name="no_listings">No skill listings yet</string>
 
     <string name="settings">Settings</string>
@@ -24,4 +25,21 @@
     <string name="language_afrikaans">Afrikaans</string>
     <string name="enable_notifications">Enable notifications</string>
     <string name="sync_wifi_only">Sync on Wi-Fi only</string>
+
+    <string name="sso_google_button">Sign in with Google</string>
+    <string name="add_listing_title">Add Skill Listing</string>
+    <string name="title_hint">Title (e.g., Graphic Design)</string>
+    <string name="category_hint">Category</string>
+    <string name="description_hint">Description</string>
+    <string name="image_url_hint">Image / Blob Storage URL (Optional)</string>
+    <string name="add_button">Add Listing</string>
+    <string name="cancel">Cancel</string>
+    <string name="listing_created">Skill listing published successfully!</string>
+    <string name="listing_saved_offline">Listing saved offline. Will automatically sync when reconnected.</string>
+    <string name="syncing_offline_data">Syncing offline data…</string>
+    <string name="password_encrypted_notice">Password encrypted with AES-256/bcrypt security</string>
+    <string name="channel_name">SkillSwap Notifications</string>
+    <string name="channel_description">Notifications for skill swaps and updates</string>
+    <string name="offered_by">Offered by: %1$s</string>
+    <string name="blob_asset">Blob Asset: %1$s</string>
 </resources>

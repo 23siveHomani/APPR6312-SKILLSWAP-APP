@@ -26,6 +26,10 @@ data class LoginRequest(
     val password: String
 )
 
+data class GoogleAuthRequest(
+    val idToken: String
+)
+
 data class SettingsUpdateRequest(
     val languagePref: String? = null,
     val notificationsEnabled: Boolean? = null,
@@ -33,12 +37,20 @@ data class SettingsUpdateRequest(
     val fcmToken: String? = null
 )
 
+data class CreateListingRequest(
+    val title: String,
+    val category: String,
+    val description: String?,
+    val imageUrl: String? = null
+)
+
 data class SkillListing(
     val _id: String,
     val title: String,
     val category: String,
     val description: String?,
-    val ownerId: OwnerSummary?
+    val ownerId: OwnerSummary? = null,
+    val imageUrl: String? = null
 )
 
 data class OwnerSummary(

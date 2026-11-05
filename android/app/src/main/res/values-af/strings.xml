@@ -14,6 +14,7 @@
 
     <string name="browse_skills">Blaai deur vaardighede</string>
     <string name="offline_banner">Jy kyk na gekaste resultate — dit lyk of jy vanlyn is</string>
+    <string name="pending_sync_banner">Vanlyn items gevang vir sinkronisering</string>
     <string name="no_listings">Nog geen vaardigheidslysings nie</string>
 
     <string name="settings">Instellings</string>
@@ -24,4 +25,21 @@
     <string name="language_afrikaans">Afrikaans</string>
     <string name="enable_notifications">Aktiveer kennisgewings</string>
     <string name="sync_wifi_only">Sinkroniseer slegs op Wi-Fi</string>
+
+    <string name="sso_google_button">Meld aan met Google</string>
+    <string name="add_listing_title">Voeg Vaardigheidslysing By</string>
+    <string name="title_hint">Titel (bv. Grafiese Ontwerp)</string>
+    <string name="category_hint">Kategorie</string>
+    <string name="description_hint">Beskrywing</string>
+    <string name="image_url_hint">Beeld / Blob Stoor-URL (Opsioneel)</string>
+    <string name="add_button">Voeg Lysing By</string>
+    <string name="cancel">Kanselleer</string>
+    <string name="listing_created">Vaardigheidslysing suksesvol gepubliseer!</string>
+    <string name="listing_saved_offline">Lysing vanlyn gestoor. Sal outomaties sinkroniseer wanneer jy weer aanlyn is.</string>
+    <string name="syncing_offline_data">Besig om vanlyn data te sinkroniseer…</string>
+    <string name="password_encrypted_notice">Wagwoord geënkripteer met AES-256/bcrypt-sekuriteit</string>
+    <string name="channel_name">SkillSwap Kennisgewings</string>
+    <string name="channel_description">Kennisgewings vir vaardigheidsruilings</string>
+    <string name="offered_by">Aangebied deur: %1$s</string>
+    <string name="blob_asset">Blob Bate: %1$s</string>
 </resources>

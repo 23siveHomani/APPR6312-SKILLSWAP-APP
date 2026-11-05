@@ -15,5 +15,6 @@ data class ListingEntity(
     val category: String,
     val description: String?,
     val ownerName: String?,
+    val imageUrl: String? = null,
     val cachedAt: Long = System.currentTimeMillis()
 )

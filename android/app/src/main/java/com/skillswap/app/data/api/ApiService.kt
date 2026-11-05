@@ -17,6 +17,9 @@ interface ApiService {
     @POST("auth/login")
     suspend fun login(@Body body: LoginRequest): Response<AuthResponse>
 
+    @POST("auth/google")
+    suspend fun loginWithGoogle(@Body body: GoogleAuthRequest): Response<AuthResponse>
+
     @GET("auth/me")
     suspend fun getMe(): Response<UserResponse>
 
@@ -25,4 +28,7 @@ interface ApiService {
 
     @GET("listings")
     suspend fun getListings(@Query("category") category: String? = null): Response<ListingsResponse>
+
+    @POST("listings")
+    suspend fun createListing(@Body body: CreateListingRequest): Response<SkillListing>
 }

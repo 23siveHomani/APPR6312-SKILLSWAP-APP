@@ -60,4 +60,20 @@ class AuthRepositoryTest {
         assertTrue(result is ApiResult.Failure)
         assertEquals("Invalid email or password", (result as ApiResult.Failure).message)
     }
+
+    @Test
+    fun `loginWithGoogle success saves token and returns user`() = runTest {
+        val api = mock<ApiService>()
+        val session = mock<SessionManager>()
+        whenever(api.loginWithGoogle(any())).thenReturn(
+            Response.success(AuthResponse(token = "fake.google.jwt.token", user = fakeUser))
+        )
+
+        val repository = AuthRepository(api, session)
+        val result = repository.loginWithGoogle("dummy_id_token")
+
+        assertTrue(result is ApiResult.Success)
+        assertEquals(fakeUser, (result as ApiResult.Success).data)
+        verify(session).saveToken("fake.google.jwt.token")
+    }
 }
