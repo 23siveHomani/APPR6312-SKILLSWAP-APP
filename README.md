@@ -156,16 +156,10 @@ Both give a green ✅ / red ❌ check on commits and PRs, satisfying the brief's
 
 ## Demonstration video
 
-_Add the link to your demo video here before submission._ The video should show: registering and
-logging in with an encrypted password, changing settings, the REST API/database connection
-(including what's actually stored server-side), and the Part 1 features, narrated throughout.
+****LATER.
 
 ## Use of AI tools
-
-_Add your ≤500-word AI-usage write-up here before submission, per the brief's requirement — for
-example, which parts of this codebase or README were drafted with AI assistance, and how you
-reviewed, tested and modified that output._
-
+****LATER 
 ## References
 
 - Firebase (2026) *Firebase Cloud Messaging Documentation*. https://firebase.google.com/docs/cloud-messaging
