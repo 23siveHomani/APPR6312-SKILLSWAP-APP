@@ -18,8 +18,10 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        // Change this to your deployed Render URL, e.g. https://skillswap-api.onrender.com/
-        buildConfigField("String", "API_BASE_URL", "\"http://10.0.2.2:5000/\"")
+        // For real device on local Wi-Fi: use PC IP (e.g. http://192.168.43.180:5000/)
+        // For emulator: use http://10.0.2.2:5000/
+        // For production: use your deployed Render URL (e.g. https://skillswap-api.onrender.com/)
+        buildConfigField("String", "API_BASE_URL", "\"http://192.168.43.180:5000/\"")
     }
 
     buildTypes {
